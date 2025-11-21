@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Capturing Your Attendance Location...</h2>
+
+<script>
+navigator.geolocation.getCurrentPosition(success, error);
+
+function success(pos) {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    // Send to your Flask API
+    fetch("http://127.0.0.1:5000/api/attendance_location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            enrollment: "12345",
+            subject: "MATH101",
+            latitude: lat,
+            longitude: lng
+        })
+    })
+    .then(res => res.json())
+    .then(data => alert("Attendance Marked Successfully!"));
+}
+
+function error(err) {
+    alert("Location permission denied. Cannot mark attendance.");
+}
+</script>
+</body>
+</html>

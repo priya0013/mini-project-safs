@@ -54,7 +54,7 @@ dialog_text = "Are you sure want to close?"
 window.configure(background="#ffffff")  # Dark theme
 
 
-GOOGLE_API_KEY = "AIzaSyCLcYkA_oDeLyNG8Dapuv7C48iYzsyI1gI"  # <--- Replace with your key
+GOOGLE_API_KEY = " "  # <--- Replace with your key
 
 def get_address(lat, lng):
     try:

@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'terraform-attendance/**'
+      - 'attsyscopy/terraform-attendance/**'
       - '.github/workflows/deploy.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'terraform-attendance/**'
+      - 'attsyscopy/terraform-attendance/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -21,7 +21,7 @@ permissions:
 env:
   TF_IN_AUTOMATION: true
   TF_INPUT: false
-  TF_WORKING_DIR: terraform-attendance
+  TF_WORKING_DIR: attsyscopy/terraform-attendance
   AWS_REGION: ap-south-1
 
 jobs:

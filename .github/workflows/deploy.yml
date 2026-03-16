@@ -23,6 +23,7 @@ env:
   TF_INPUT: false
   TF_WORKING_DIR: attsyscopy/terraform-attendance
   AWS_REGION: ap-south-1
+  TF_STATE_KEY: attendance/terraform.tfstate
 
 jobs:
   terraform-plan:
@@ -46,13 +47,35 @@ jobs:
       - name: Verify AWS identity
         run: aws sts get-caller-identity
 
+      - name: Set Terraform state bucket
+        shell: bash
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "TF_STATE_BUCKET=mini-project-safs-tfstate-${ACCOUNT_ID}-${AWS_REGION}" >> "$GITHUB_ENV"
+
+      - name: Ensure Terraform state bucket
+        shell: bash
+        run: |
+          if aws s3api head-bucket --bucket "$TF_STATE_BUCKET" 2>/dev/null; then
+            echo "Using existing bucket $TF_STATE_BUCKET"
+          else
+            aws s3api create-bucket \
+              --bucket "$TF_STATE_BUCKET" \
+              --region "$AWS_REGION" \
+              --create-bucket-configuration LocationConstraint="$AWS_REGION"
+          fi
+
+          aws s3api put-bucket-versioning \
+            --bucket "$TF_STATE_BUCKET" \
+            --versioning-configuration Status=Enabled
+
       - name: Terraform format check
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform fmt -check -recursive
 
       - name: Terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init
+        run: terraform init -reconfigure -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="key=$TF_STATE_KEY" -backend-config="region=$AWS_REGION"
 
       - name: Terraform validate
         working-directory: ${{ env.TF_WORKING_DIR }}
@@ -93,9 +116,31 @@ jobs:
       - name: Verify AWS identity
         run: aws sts get-caller-identity
 
+      - name: Set Terraform state bucket
+        shell: bash
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "TF_STATE_BUCKET=mini-project-safs-tfstate-${ACCOUNT_ID}-${AWS_REGION}" >> "$GITHUB_ENV"
+
+      - name: Ensure Terraform state bucket
+        shell: bash
+        run: |
+          if aws s3api head-bucket --bucket "$TF_STATE_BUCKET" 2>/dev/null; then
+            echo "Using existing bucket $TF_STATE_BUCKET"
+          else
+            aws s3api create-bucket \
+              --bucket "$TF_STATE_BUCKET" \
+              --region "$AWS_REGION" \
+              --create-bucket-configuration LocationConstraint="$AWS_REGION"
+          fi
+
+          aws s3api put-bucket-versioning \
+            --bucket "$TF_STATE_BUCKET" \
+            --versioning-configuration Status=Enabled
+
       - name: Terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init
+        run: terraform init -reconfigure -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="key=$TF_STATE_KEY" -backend-config="region=$AWS_REGION"
 
       - name: Download tfplan artifact
         uses: actions/download-artifact@v4

@@ -1,7 +1,7 @@
 Smart Attendance and Feedback System
 Overview
 
-The Smart Attendance and Feedback System is an AI-powered platform designed to automate student attendance using face recognition and to collect real-time feedback from students. The system improves attendance management, reduces manual work, and enables administrators and teachers to gather feedback efficiently.
+The Smart Attendance and Feedback System is an  platform designed to automate student attendance using face recognition and to collect real-time feedback from students. The system improves attendance management, reduces manual work, and enables administrators and teachers to gather feedback efficiently.
 
 This project integrates face recognition, geolocation tracking, and feedback collection with a user-friendly GUI built in Python (Tkinter). MongoDB is used as the backend database to store attendance, feedback, and student details.
 
